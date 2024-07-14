@@ -1,0 +1,15 @@
+{
+  "name": "rocs8assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cway": "pnpm --filter=conway",
+    "fe": "pnpm --filter=client",
+    "be": "pnpm --filter=server",
+    "dev": "pnpm --parallel dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
