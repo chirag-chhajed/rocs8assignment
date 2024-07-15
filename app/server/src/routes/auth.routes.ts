@@ -1,16 +1,31 @@
-import { registerUser } from "@/controllers/auth.controller.js";
+import {
+  loginUser,
+  registerUser,
+  resendVerificationEmail,
+  verifyUser,
+} from "@/controllers/auth.controller.js";
+import { refreshingToken } from "@/controllers/token.controller.js";
 import { validateData } from "@/middlewares/validateSchema.js";
-import { signupSchema } from "@/validations/authValidation.js";
+import {
+  loginSchema,
+  resendSchema,
+  signupSchema,
+  verifySchema,
+} from "@/validations/authValidation.js";
 import { Router } from "express";
 
 export const authRouter = Router();
 
 authRouter.post("/signup", validateData(signupSchema), registerUser);
 
-authRouter.post("/login", async (req, res) => {
-  res.send("login");
-});
+authRouter.post("/login", validateData(loginSchema), loginUser);
+
+authRouter.post("/verify", validateData(verifySchema), verifyUser);
+
+authRouter.post("/resend", validateData(resendSchema), resendVerificationEmail);
+
+authRouter.get("/refresh", refreshingToken);
 
 authRouter.post("/logout", async (req, res) => {
-  res.send("logout");
+  res.clearCookie("refreshToken").json("Logged out");
 });

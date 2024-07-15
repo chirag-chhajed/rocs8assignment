@@ -18,3 +18,16 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const verifySchema = z.object({
+  otp: z.string().trim().length(8),
+  id: z.number(),
+});
+
+export type VerifyInput = z.infer<typeof verifySchema>;
+
+export const resendSchema = z.object({
+  email: z.string().trim().email("Invalid email address"),
+});
+
+export type ResendInput = z.infer<typeof resendSchema>;
