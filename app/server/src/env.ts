@@ -11,6 +11,11 @@ export const env = createEnv({
     POSTGRES_DATABASE: z.string().min(1),
     JWT_ACCESS_SECRET_KEY: z.string().min(1),
     JWT_REFRESH_SECRET_KEY: z.string().min(1),
+    SMTP_HOST: z.string().min(1),
+    SMTP_PORT: z.string(),
+    SMTP_USER: z.string().min(1),
+    SMTP_PASSWORD: z.string().min(1),
+    SMTP_SECURE: z.enum(["true", "false"]),
   },
   runtimeEnv: process.env,
 });
@@ -23,6 +28,11 @@ const envVariables = z.object({
   POSTGRES_DATABASE: z.string().min(1),
   JWT_ACCESS_SECRET_KEY: z.string().min(1),
   JWT_REFRESH_SECRET_KEY: z.string().min(1),
+  SMTP_HOST: z.string().min(1),
+  SMTP_PORT: z.string(),
+  SMTP_USER: z.string().min(1),
+  SMTP_PASSWORD: z.string().min(1),
+  SMTP_SECURE: z.enum(["true", "false"]),
 });
 
 envVariables.parse(process.env);

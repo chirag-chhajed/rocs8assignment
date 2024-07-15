@@ -1,20 +1,17 @@
 import {
+  boolean,
   index,
   pgTable,
   serial,
-  text,
   timestamp,
   varchar,
-  boolean,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const users = pgTable(
   "users",
   {
     id: serial("id").primaryKey(),
-    name: text("name").notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
     password: varchar("password", { length: 255 }),
     isVerified: boolean("is_verified").notNull().default(false),
@@ -34,7 +31,7 @@ export const otps = pgTable(
     userId: serial("user_id")
       .notNull()
       .references(() => users.id),
-    otp: varchar("otp", { length: 6 }).notNull(),
+    otp: varchar("otp", { length: 8 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     expiresAt: timestamp("expires_at").notNull(),
     isUsed: boolean("is_used").notNull().default(false),

@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs";
 import {
   type BaseQueryFn,
   type FetchArgs,
@@ -6,7 +7,6 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import type { RootState } from "..";
-import { env } from "@/env.mjs";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: env.NEXT_PUBLIC_API_URL,

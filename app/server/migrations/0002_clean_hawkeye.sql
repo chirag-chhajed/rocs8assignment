@@ -1,0 +1,1 @@
+ALTER TABLE "otps" ALTER COLUMN "otp" SET DATA TYPE varchar(8);

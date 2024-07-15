@@ -1,6 +1,7 @@
+import { pool } from "@/db/client.js";
 import cookieParser from "cookie-parser";
 import express from "express";
-import { pool } from "@/db/client.js";
+import { authRouter } from "@/routes/auth.routes.js";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+app.use("/auth", authRouter);
 
 app.listen(3434, async () => {
   try {
