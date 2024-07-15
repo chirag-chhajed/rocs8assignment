@@ -7,9 +7,17 @@
     "cway": "pnpm --filter=conway",
     "fe": "pnpm --filter=client",
     "be": "pnpm --filter=server",
-    "dev": "pnpm --parallel dev"
+    "dev": "pnpm --parallel dev",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write"
   },
+  "workspaces": [
+    "app/*"
+  ],
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3"
+  }
 }

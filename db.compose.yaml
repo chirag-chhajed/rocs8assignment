@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16.3
+    container_name: roc8assignment_database
+    environment:
+      POSTGRES_DB: roc8assignment
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 851bd86aae112e656b9b4ac0e5b06c73bb55c6335174e445d0e620d8a0d803d2
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - assignment_pg_data:/var/lib/postgresql/data
+    ports:
+      - "5430:5432" 
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d roc8assignment"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  assignment_pg_data:
