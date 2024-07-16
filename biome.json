@@ -29,7 +29,8 @@
             "./app/*/dist",
             "./app/*/.next",
             "./app/*/build",
-            "./app/*/.docusaurus"
+            "./app/*/.docusaurus",
+            "./app/conway/tsconfig*"
         ]
     },
     "json": {

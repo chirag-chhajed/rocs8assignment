@@ -1,22 +1,22 @@
 import { db } from "@/db/client.js";
 import { otps, users } from "@/db/schema.js";
 import { loadEmailBlockList } from "@/utils/emailBlockList.js";
+import { emailClient } from "@/utils/emailClient.js";
+import { generateTokens } from "@/utils/token.js";
 import type {
   LoginInput,
   ResendInput,
   SignupInput,
   VerifyInput,
 } from "@/validations/authValidation";
+import bcrypt from "bcrypt";
 import { and, desc, eq, gt } from "drizzle-orm";
 import type { Request, Response } from "express";
-import bcrypt from "bcrypt";
 import { nanoid } from "nanoid";
-import { emailClient } from "@/utils/emailClient.js";
-import { generateTokens } from "@/utils/token.js";
 
 export const registerUser = async (
   req: Request<{}, {}, SignupInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email, name, password } = req.body;
   try {
@@ -28,7 +28,7 @@ export const registerUser = async (
 
     const emailBlockList = await loadEmailBlockList();
     const isEmailBlocked = emailBlockList.includes(
-      email.split("@")[1] as string
+      email.split("@")[1] as string,
     );
     if (isEmailBlocked) {
       res.status(400).json("Email is blocked");
@@ -52,15 +52,14 @@ export const registerUser = async (
         expiresAt: new Date(Date.now() + 1000 * 60 * 10),
         userId: insertedUserInfo?.id,
       });
+      await emailClient.sendMail({
+        from: "postmaster@2af42976af8252bc9911d16d.work.gd",
+        to: email,
+        subject: "Verify your email",
+        text: `Your OTP is ${otp}`,
+        html: `Your OTP is <b>${otp}</b>`,
+      });
       return insertedUserInfo;
-    });
-
-    await emailClient.sendMail({
-      from: "Your Name <onboarding@resend.dev>",
-      to: email,
-      subject: "Verify your email",
-      text: `Your OTP is ${otp}`,
-      html: `Your OTP is <b>${otp}</b>`,
     });
 
     return res.status(201).json({ id: newlyRegisteredUser?.id });
@@ -72,7 +71,7 @@ export const registerUser = async (
 
 export const loginUser = async (
   req: Request<{}, {}, LoginInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email, password } = req.body;
   try {
@@ -108,7 +107,7 @@ export const loginUser = async (
 
 export const verifyUser = async (
   req: Request<{}, {}, VerifyInput>,
-  res: Response
+  res: Response,
 ) => {
   const { otp, id } = req.body;
   try {
@@ -120,8 +119,8 @@ export const verifyUser = async (
           eq(otps.userId, id),
           eq(otps.otp, otp),
           eq(otps.isUsed, false),
-          gt(otps.expiresAt, new Date())
-        )
+          gt(otps.expiresAt, new Date()),
+        ),
       )
       .orderBy(desc(otps.createdAt))
       .limit(1);
@@ -145,7 +144,7 @@ export const verifyUser = async (
     if (updateUserWithVerification) {
       const tokens = generateTokens(
         updateUserWithVerification?.id,
-        updateUserWithVerification?.email
+        updateUserWithVerification?.email,
       );
       res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
@@ -162,7 +161,7 @@ export const verifyUser = async (
 
 export const resendVerificationEmail = async (
   req: Request<{}, {}, ResendInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email } = req.body;
   try {
@@ -186,7 +185,7 @@ export const resendVerificationEmail = async (
       });
     });
     await emailClient.sendMail({
-      from: "Your Name <onboarding@resend.dev>",
+      from: "postmaster@2af42976af8252bc9911d16d.work.gd",
       to: email,
       subject: "Verify your email",
       text: `Your OTP is ${newOtp}`,

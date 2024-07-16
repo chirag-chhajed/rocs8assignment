@@ -9,9 +9,9 @@ export async function loadEmailBlockList() {
     "..",
     "..",
     "public",
-    "disposable_email_blocklist.conf"
+    "disposable_email_blocklist.conf",
   );
-  console.log(filePath);
+
   const content = await readFile(filePath, {
     encoding: "utf-8",
   });

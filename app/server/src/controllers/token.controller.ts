@@ -1,6 +1,6 @@
+import { env } from "@/env.js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { env } from "@/env.js";
 
 interface UserPayload extends jwt.JwtPayload {
   id: string;

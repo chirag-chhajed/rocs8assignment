@@ -21,7 +21,7 @@ export const users = pgTable(
   (table) => ({
     emailIdx: index("email_idx").on(table.email),
     passwordIdx: index("password_idx").on(table.password),
-  })
+  }),
 );
 
 export const otps = pgTable(
@@ -39,5 +39,5 @@ export const otps = pgTable(
   (table) => ({
     userIdIdx: index("user_id_idx").on(table.userId),
     otpIdx: index("otp_idx").on(table.otp),
-  })
+  }),
 );
