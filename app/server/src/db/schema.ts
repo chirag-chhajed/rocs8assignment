@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   pgTable,
+  primaryKey,
   serial,
   timestamp,
   varchar,
@@ -39,5 +40,30 @@ export const otps = pgTable(
   (table) => ({
     userIdIdx: index("user_id_idx").on(table.userId),
     otpIdx: index("otp_idx").on(table.otp),
+  }),
+);
+
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const userCategories = pgTable(
+  "user_categories",
+  {
+    userId: serial("user_id")
+      .notNull()
+      .references(() => users.id),
+    categoryId: serial("category_id")
+      .notNull()
+      .references(() => categories.id),
+    isInterested: boolean("is_interested").notNull().default(false),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.categoryId] }),
   }),
 );

@@ -2,10 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { api } from "./api";
 import { authSlice } from "./authSlice";
+import { currentPageSlice } from "./currentPageSlice";
 
 const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
+    page: currentPageSlice.reducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>

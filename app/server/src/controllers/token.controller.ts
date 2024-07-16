@@ -2,7 +2,7 @@ import { env } from "@/env.js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-interface UserPayload extends jwt.JwtPayload {
+export interface UserPayload extends jwt.JwtPayload {
   id: string;
   email: string;
 }
@@ -41,7 +41,7 @@ export const refreshingToken = (req: Request, res: Response) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       //   sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({ accessToken });

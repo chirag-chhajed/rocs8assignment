@@ -1,5 +1,6 @@
 import { pool } from "@/db/client.js";
 import { authRouter } from "@/routes/auth.routes.js";
+import { categoriesRouter } from "@/routes/categories.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 app.use("/api/auth", authRouter);
+app.use("/api/categories", categoriesRouter);
 
 app.listen(3434, async () => {
   try {

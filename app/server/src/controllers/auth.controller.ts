@@ -12,7 +12,6 @@ import type {
 import bcrypt from "bcrypt";
 import { and, desc, eq, gt } from "drizzle-orm";
 import type { Request, Response } from "express";
-import { nanoid } from "nanoid";
 
 export const registerUser = async (
   req: Request<{}, {}, SignupInput>,

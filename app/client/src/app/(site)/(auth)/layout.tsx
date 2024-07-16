@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthState } from "@/store";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {

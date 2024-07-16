@@ -29,7 +29,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
-  const [inputType, setInputType] = useState<"text" | "password">("text");
+  const [inputType, setInputType] = useState<"text" | "password">("password");
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -115,6 +115,7 @@ export default function LoginPage() {
           <Button
             className="uppercase font-medium text-center w-full tracking-wider"
             type="submit"
+            disabled={isLoading || formState.isSubmitting}
           >
             login
           </Button>
