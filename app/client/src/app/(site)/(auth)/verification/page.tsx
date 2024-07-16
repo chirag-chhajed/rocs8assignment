@@ -1,3 +1,9 @@
-export default function App() {
-  return <h1 className="text-3xl font-bold underline">Verification</h1>;
+import VerificationForm from "./VerificationForm";
+
+export default function App({
+  searchParams,
+}: {
+  searchParams: { id: string; email: string };
+}) {
+  return <VerificationForm id={searchParams.id} email={searchParams.email} />;
 }

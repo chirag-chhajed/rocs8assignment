@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-app.use("api/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 app.listen(3434, async () => {
   try {

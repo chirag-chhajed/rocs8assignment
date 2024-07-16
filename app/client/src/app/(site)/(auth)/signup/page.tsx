@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,12 +9,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useSignupMutation } from "@/store/api/authApi";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const formSchema = z.object({
   name: z
@@ -28,11 +31,11 @@ const formSchema = z.object({
     .min(8, "Password must be minimum of 8 characters")
     .regex(
       /(?=.*[A-Z])(?=.*[a-z])/,
-      "Password must contain upper and lower case letters"
+      "Password must contain upper and lower case letters",
     )
     .regex(
       /(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])/,
-      "Password must contain special characters"
+      "Password must contain special characters",
     ),
 });
 
@@ -47,10 +50,30 @@ export default function SignupPage() {
     },
     resolver: zodResolver(formSchema),
   });
+  const { handleSubmit, formState } = form;
+
+  const [signup, { isLoading }] = useSignupMutation();
+  const router = useRouter();
+  const onSubmit = async (data: FormValues) => {
+    toast.promise(signup(data).unwrap(), {
+      loading: "Creating your account...",
+      success: (result) => {
+        const params = new URLSearchParams();
+        params.append("email", data.email);
+        params.append("id", result.id);
+        router.push(`/verification?${params.toString()}`);
+        return "Account created successfully!";
+      },
+      error: (error) => `Error: ${error.data?.error || "Something went wrong"}`,
+    });
+  };
   return (
     <main className="flex justify-center px-10">
       <Form {...form}>
-        <form className="my-10 rounded-[20px] border border-neutral-300 bg-white px-16 py-10 space-y-8 lg:max-w-[576px] h-full">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="my-10 rounded-[20px] border border-neutral-300 bg-white px-16 py-10 space-y-8 lg:max-w-[576px] h-full"
+        >
           <h2 className="text-3xl text-center font-semibold">
             Create your account
           </h2>
@@ -96,6 +119,7 @@ export default function SignupPage() {
           <Button
             className="uppercase font-medium text-center w-full tracking-wider"
             type="submit"
+            disabled={formState.isSubmitting || isLoading}
           >
             create account
           </Button>

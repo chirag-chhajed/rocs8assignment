@@ -26,28 +26,28 @@ export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     signup: builder.mutation<SignupResponse, SignupBody>({
       query: ({ email, name, password }) => ({
-        url: "api/auth/signup",
+        url: "/auth/signup",
         method: "POST",
         body: { email, name, password },
       }),
     }),
     login: builder.mutation<LoginResponse, LoginBody>({
       query: ({ email, password }) => ({
-        url: "api/auth/login",
+        url: "/auth/login",
         method: "POST",
         body: { email, password },
       }),
     }),
     verify: builder.mutation<LoginResponse, VerifyBody>({
       query: ({ id, otp }) => ({
-        url: "api/auth/verify",
+        url: "/auth/verify",
         method: "POST",
         body: { id, otp },
       }),
     }),
     resend: builder.mutation<SignupResponse, { email: string }>({
       query: ({ email }) => ({
-        url: "api/auth/resend",
+        url: "/auth/resend",
         method: "POST",
         body: { email },
       }),
@@ -56,6 +56,12 @@ export const authApi = api.injectEndpoints({
       query: () => ({
         url: "/auth/refresh",
         method: "GET",
+      }),
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
       }),
     }),
   }),
@@ -67,4 +73,5 @@ export const {
   useVerifyMutation,
   useResendMutation,
   useRefreshTokenQuery,
+  useLogoutMutation,
 } = authApi;

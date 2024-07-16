@@ -22,7 +22,7 @@ export const registerUser = async (
   try {
     const user = await db.select().from(users).where(eq(users.email, email));
     if (user.length > 0) {
-      res.status(409).json("User already exists");
+      res.status(409).json({ error: "User already exists" });
       return;
     }
 
@@ -31,12 +31,19 @@ export const registerUser = async (
       email.split("@")[1] as string,
     );
     if (isEmailBlocked) {
-      res.status(400).json("Email is blocked");
+      res
+        .status(400)
+        .json({ error: `${email.split("@")[1]} emails are blocked` });
       return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const otp = nanoid(8);
+    function generateEightDigitNumber(): string {
+      return String(
+        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000),
+      );
+    }
+    const otp = generateEightDigitNumber();
 
     const newlyRegisteredUser = await db.transaction(async (trx) => {
       const [insertedUserInfo] = await trx
@@ -77,16 +84,16 @@ export const loginUser = async (
   try {
     const user = await db.select().from(users).where(eq(users.email, email));
     if (user.length === 0) {
-      res.status(401).json("User doesn not exists from this email");
+      res.status(401).json({ error: "User doesn not exists from this email" });
       return;
     }
     if (!user[0]?.isVerified) {
-      res.status(401).json("User is not verified");
+      res.status(401).json({ error: "User is not verified" });
     }
     if (user[0]?.password) {
       const hashedPassword = await bcrypt.compare(password, user[0].password);
       if (!hashedPassword) {
-        res.status(401).json("Password is incorrect");
+        res.status(401).json({ error: "Password is incorrect" });
         return;
       }
 
@@ -175,7 +182,14 @@ export const resendVerificationEmail = async (
         .status(404)
         .json({ error: "User not found or already verified" });
     }
-    const newOtp = nanoid(8);
+
+    function generateEightDigitNumber(): string {
+      return String(
+        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000),
+      );
+    }
+
+    const newOtp = generateEightDigitNumber();
     await db.transaction(async (trx) => {
       await trx.delete(otps).where(eq(otps.userId, userInfo.id));
       await trx.insert(otps).values({

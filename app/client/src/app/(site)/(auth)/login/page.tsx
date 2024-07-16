@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,14 +9,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useLoginMutation } from "@/store/api/authApi";
+import { updateAccessToken } from "@/store/authSlice";
+import { useAppDispatch } from "@/store/hooks";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const formSchema = z.object({
   email: z.string().trim().email("Invalid email address"),
@@ -34,10 +38,27 @@ export default function LoginPage() {
     },
     resolver: zodResolver(formSchema),
   });
+  const { handleSubmit, formState } = form;
+  const dispatch = useAppDispatch();
+  const [login, { isLoading }] = useLoginMutation();
+  const onSubmit = async (data: FormValues) => {
+    toast.promise(login(data).unwrap(), {
+      loading: "Logging in...",
+      success: (result) => {
+        dispatch(updateAccessToken({ accessToken: result.accessToken }));
+        return "Logged in successfully";
+      },
+      error: (error) => `Error: ${error.data?.error || "Something went wrong"}`,
+    });
+  };
+
   return (
     <main className="flex justify-center px-10">
       <Form {...form}>
-        <form className="my-10 rounded-[20px] border border-neutral-300 bg-white px-16 py-10 space-y-8 lg:max-w-[576px] h-full">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="my-10 rounded-[20px] border border-neutral-300 bg-white px-16 py-10 space-y-8 lg:max-w-[576px] h-full"
+        >
           <h2 className="text-3xl font-semibold text-center capitalize">
             Login
           </h2>

@@ -21,7 +21,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 
 export const verifySchema = z.object({
   otp: z.string().trim().length(8),
-  id: z.number(),
+  id: z.coerce.number(),
 });
 
 export type VerifyInput = z.infer<typeof verifySchema>;

@@ -21,10 +21,10 @@ export const authSlice = createSlice({
       console.log("Updating access token");
       state.accessToken = action.payload.accessToken;
     },
-    logout: (state) => {
+    clearTokens: (state) => {
       state.accessToken = null;
     },
   },
 });
 
-export const { updateAccessToken, logout } = authSlice.actions;
+export const { updateAccessToken, clearTokens } = authSlice.actions;
