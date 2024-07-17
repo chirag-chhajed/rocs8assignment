@@ -8,7 +8,7 @@ export interface UserPayload extends jwt.JwtPayload {
   email: string;
 }
 
-const isProd = env.NODE_ENV === "production";
+const isProd = env.NODE_ENV_APP === "production";
 
 export const refreshingToken = (req: Request, res: Response) => {
   try {

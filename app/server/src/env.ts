@@ -17,7 +17,7 @@ export const env = createEnv({
     SMTP_PASSWORD: z.string().min(1),
     PORT: z.coerce.number().int(),
     CLIENT_URL: z.string().url(),
-    NODE_ENV: z.enum(["development", "production"]),
+    NODE_ENV_APP: z.enum(["development", "production"]),
   },
   runtimeEnv: process.env,
 });
@@ -36,7 +36,7 @@ const envVariables = z.object({
   SMTP_PASSWORD: z.string().min(1),
   PORT: z.coerce.number().int(),
   CLIENT_URL: z.string().url(),
-  NODE_ENV: z.enum(["development", "production"]),
+  NODE_ENV_APP: z.enum(["development", "production"]),
 });
 
 envVariables.parse(process.env);
