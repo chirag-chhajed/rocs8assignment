@@ -8,6 +8,8 @@ export interface UserPayload extends jwt.JwtPayload {
   email: string;
 }
 
+const isProd = env.NODE_ENV === "production";
+
 export const refreshingToken = (req: Request, res: Response) => {
   try {
     const token = req.cookies.refreshToken;
@@ -34,9 +36,9 @@ export const refreshingToken = (req: Request, res: Response) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      //   sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
     });
 
     return res.status(200).json({ accessToken });
