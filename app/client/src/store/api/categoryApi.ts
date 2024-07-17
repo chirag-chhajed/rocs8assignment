@@ -1,5 +1,6 @@
 import type { RootState } from "@/store";
 import { api } from "@/store/api/index";
+import { updateCurrentPage } from "@/store/currentPageSlice";
 
 type Category = {
   id: string;
@@ -26,6 +27,14 @@ export const categoryApi = api.injectEndpoints({
         method: "GET",
         params: { page },
       }),
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateCurrentPage({ currentPage: data.currentPage }));
+        } catch (error) {
+          console.error("Failed to fetch categories", error);
+        }
+      },
       providesTags: ["categories"],
     }),
     updateCategory: builder.mutation<
@@ -39,17 +48,11 @@ export const categoryApi = api.injectEndpoints({
       }),
       async onQueryStarted(
         { categoryId, isInterested },
-        { dispatch, queryFulfilled, getState },
+        { dispatch, queryFulfilled, getState }
       ) {
         // Optimistic update
         const state = getState() as RootState;
-        console.log("onQueryStarted triggered");
-        console.log(
-          "Updating category:",
-          categoryId,
-          "isInterested:",
-          isInterested,
-        );
+        // console.log("onQueryStarted triggered");
         const currentPage = state.page.currentPage;
         const patchResult = dispatch(
           categoryApi.util.updateQueryData(
@@ -57,21 +60,21 @@ export const categoryApi = api.injectEndpoints({
             { page: currentPage },
             (draft) => {
               const category = draft.categories.find(
-                (c) => c.id === categoryId,
+                (c) => c.id === categoryId
               );
               if (category) {
                 category.isInterested = isInterested;
               }
-            },
-          ),
+            }
+          )
         );
         try {
-          console.log("Waiting for query to fulfill");
+          // console.log("Waiting for query to fulfill");
           await queryFulfilled;
-          console.log("Query fulfilled successfully");
+          // console.log("Query fulfilled successfully");
         } catch {
           // If the mutation fails, revert the optimistic update
-          console.error("Mutation failed, reverting optimistic update");
+          // console.error("Mutation failed, reverting optimistic update");
           patchResult.undo();
         }
       },

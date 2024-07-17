@@ -5,40 +5,43 @@ import "dotenv/config";
 export const env = createEnv({
   server: {
     POSTGRES_HOST: z.string().min(1),
-    POSTGRES_PORT: z.string(),
+    POSTGRES_PORT: z.coerce.number().int(),
     POSTGRES_USER: z.string().min(1),
     POSTGRES_PASSWORD: z.string().min(1),
     POSTGRES_DATABASE: z.string().min(1),
     JWT_ACCESS_SECRET_KEY: z.string().min(1),
     JWT_REFRESH_SECRET_KEY: z.string().min(1),
     SMTP_HOST: z.string().min(1),
-    SMTP_PORT: z.string(),
+    SMTP_PORT: z.coerce.number().int(),
     SMTP_USER: z.string().min(1),
     SMTP_PASSWORD: z.string().min(1),
-    SMTP_SECURE: z.enum(["true", "false"]),
+    PORT: z.coerce.number().int(),
+    CLIENT_URL: z.string().url(),
   },
   runtimeEnv: process.env,
 });
 
 const envVariables = z.object({
   POSTGRES_HOST: z.string().min(1),
-  POSTGRES_PORT: z.string(),
+  POSTGRES_PORT: z.coerce.number().int(),
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
   POSTGRES_DATABASE: z.string().min(1),
   JWT_ACCESS_SECRET_KEY: z.string().min(1),
   JWT_REFRESH_SECRET_KEY: z.string().min(1),
   SMTP_HOST: z.string().min(1),
-  SMTP_PORT: z.string(),
+  SMTP_PORT: z.coerce.number().int(),
   SMTP_USER: z.string().min(1),
   SMTP_PASSWORD: z.string().min(1),
-  SMTP_SECURE: z.enum(["true", "false"]),
+  PORT: z.coerce.number().int(),
+  CLIENT_URL: z.string().url(),
 });
 
 envVariables.parse(process.env);
 
 declare global {
   namespace NodeJS {
+    // @ts-ignore
     interface ProcessEnv extends z.infer<typeof envVariables> {}
   }
 }

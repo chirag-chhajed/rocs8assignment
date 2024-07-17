@@ -117,7 +117,7 @@ export const verifyUser = async (
 ) => {
   const { otp, id } = req.body;
   try {
-    const userOtps = await db
+    const [userOtps] = await db
       .select()
       .from(otps)
       .where(
@@ -131,7 +131,7 @@ export const verifyUser = async (
       .orderBy(desc(otps.createdAt))
       .limit(1);
 
-    if (userOtps.length === 0) {
+    if (!userOtps) {
       return res.status(400).json({ error: "Invalid or expired OTP" });
     }
     const updateUserWithVerification = await db.transaction(async (trx) => {
@@ -143,7 +143,7 @@ export const verifyUser = async (
       await trx
         .update(otps)
         .set({ isUsed: true })
-        .where(eq(otps.id, userOtps[0]?.id));
+        .where(eq(otps.id, userOtps.id));
 
       return updatedUser;
     });

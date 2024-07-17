@@ -18,7 +18,6 @@ export const authSlice = createSlice({
       state,
       action: PayloadAction<{ accessToken: string }>,
     ) => {
-      console.log("Updating access token");
       state.accessToken = action.payload.accessToken;
     },
     clearTokens: (state) => {

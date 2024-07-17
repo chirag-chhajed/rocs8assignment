@@ -91,7 +91,12 @@ export default function LoginPage() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative flex items-center">
-                    <Input {...field} type={inputType} placeholder="Enter" />
+                    <Input
+                      {...field}
+                      type={inputType}
+                      placeholder="Enter"
+                      autoComplete="current-password"
+                    />
                     <button
                       type="button"
                       aria-label={

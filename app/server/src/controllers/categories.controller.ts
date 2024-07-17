@@ -42,11 +42,12 @@ export const getCategories = async (req: Request, res: Response) => {
         userCategories,
         and(
           eq(userCategories.categoryId, categories.id),
-          eq(userCategories.userId, userId),
+          eq(userCategories.userId, Number.parseInt(userId)),
         ),
       )
       .limit(pageSize)
-      .offset((page - 1) * pageSize);
+      .offset((page - 1) * pageSize)
+      .orderBy(categories.name);
 
     return res.json({
       categories: categoriesResult,
@@ -90,7 +91,7 @@ export const addUserCategory = async (
         },
       })
       .returning();
-    console.log(updatedCategories);
+
     return res.json({ message: "Category added successfully" });
   } catch (error) {
     console.error("Failed to add category", error);

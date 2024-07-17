@@ -24,6 +24,16 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+function maskEmail(email: string) {
+  const atIndex = email.indexOf("@");
+  if (atIndex <= 2) {
+    return email;
+  }
+  const prefix = email.substring(0, 3);
+  const suffix = email.substring(atIndex);
+  return `${prefix}***${suffix}`;
+}
+
 export default function VerificationForm({
   id,
   email,
@@ -31,7 +41,11 @@ export default function VerificationForm({
   id: string;
   email: string;
 }) {
-  console.log(email);
+  const propParse = z.object({
+    id: z.coerce.number().int(),
+    email: z.string().email(),
+  });
+
   const router = useRouter();
   const form = useForm<FormValues>({
     defaultValues: {
@@ -42,7 +56,7 @@ export default function VerificationForm({
   const { handleSubmit, formState } = form;
   const dispatch = useAppDispatch();
   const [verify, { isLoading }] = useVerifyMutation();
-  if (!id || !email) {
+  if (!id || !email || propParse.safeParse({ id, email }).success === false) {
     router.push("/signup");
   }
   const onSubmit = async (data: FormValues) => {
@@ -67,7 +81,7 @@ export default function VerificationForm({
           </h2>
           <p className="text-center">
             Enter the 8 digit code you have received on{" "}
-            <span className="font-medium">swa***@gmail.com</span>
+            <span className="font-medium">{maskEmail(email)}</span>
           </p>
           <FormField
             control={form.control}

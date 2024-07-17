@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
-import { api } from "./api";
+import { api } from "@/store/api";
 import { authSlice } from "./authSlice";
 import { currentPageSlice } from "./currentPageSlice";
 

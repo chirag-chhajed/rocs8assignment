@@ -1,4 +1,5 @@
 import { env } from "@/env.js";
+import { generateTokens } from "@/utils/token.js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
@@ -28,14 +29,8 @@ export const refreshingToken = (req: Request, res: Response) => {
     }
 
     const { id, email } = decoded;
-    const payload = { id, email };
 
-    const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET_KEY, {
-      expiresIn: "15m",
-    });
-    const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET_KEY, {
-      expiresIn: "7d",
-    });
+    const { accessToken, refreshToken } = generateTokens(id, email);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,

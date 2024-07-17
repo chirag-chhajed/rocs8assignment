@@ -5,6 +5,5 @@ export default function App({
 }: {
   searchParams: { page: string };
 }) {
-  console.log(searchParams, "searchParams");
   return <CategoriesCard page={Number.parseInt(searchParams.page)} />;
 }

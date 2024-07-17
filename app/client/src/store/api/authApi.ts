@@ -1,4 +1,5 @@
 import { api } from "@/store/api/index";
+import { clearTokens } from "@/store/authSlice";
 
 type SignupBody = {
   name: string;
@@ -57,12 +58,27 @@ export const authApi = api.injectEndpoints({
         url: "/auth/refresh",
         method: "GET",
       }),
+      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch {
+          dispatch(clearTokens());
+        }
+      },
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
+      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(clearTokens());
+        } catch {
+          dispatch(clearTokens());
+        }
+      },
     }),
   }),
 });
