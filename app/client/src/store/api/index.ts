@@ -1,4 +1,6 @@
 import { env } from "@/env.mjs";
+import type { RootState } from "@/store";
+import { clearTokens, updateAccessToken } from "@/store/authSlice";
 import {
   type BaseQueryFn,
   type FetchArgs,
@@ -6,8 +8,6 @@ import {
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
-import type { RootState } from "@/store";
-import { clearTokens, updateAccessToken } from "@/store/authSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: env.NEXT_PUBLIC_API_URL,
@@ -31,7 +31,7 @@ const baseQueryWithReauth: BaseQueryFn<
     const refreshResult = (await baseQuery(
       "/auth/refresh",
       api,
-      extraOptions
+      extraOptions,
     )) as {
       data: { accessToken: string } | undefined;
       error?: FetchBaseQueryError;
@@ -39,7 +39,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
     if (refreshResult.data) {
       api.dispatch(
-        updateAccessToken({ accessToken: refreshResult.data.accessToken })
+        updateAccessToken({ accessToken: refreshResult.data.accessToken }),
       );
       result = await baseQuery(args, api, extraOptions);
     } else {

@@ -18,7 +18,7 @@ const isProd = env.NODE_ENV === "production";
 
 export const registerUser = async (
   req: Request<{}, {}, SignupInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email, name, password } = req.body;
   try {
@@ -30,7 +30,7 @@ export const registerUser = async (
 
     const emailBlockList = await loadEmailBlockList();
     const isEmailBlocked = emailBlockList.includes(
-      email.split("@")[1] as string
+      email.split("@")[1] as string,
     );
     if (isEmailBlocked) {
       res
@@ -42,7 +42,7 @@ export const registerUser = async (
     const hashedPassword = await bcrypt.hash(password, 10);
     function generateEightDigitNumber(): string {
       return String(
-        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000)
+        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000),
       );
     }
     const otp = generateEightDigitNumber();
@@ -80,7 +80,7 @@ export const registerUser = async (
 
 export const loginUser = async (
   req: Request<{}, {}, LoginInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email, password } = req.body;
   try {
@@ -117,7 +117,7 @@ export const loginUser = async (
 
 export const verifyUser = async (
   req: Request<{}, {}, VerifyInput>,
-  res: Response
+  res: Response,
 ) => {
   const { otp, id } = req.body;
   try {
@@ -129,8 +129,8 @@ export const verifyUser = async (
           eq(otps.userId, id),
           eq(otps.otp, otp),
           eq(otps.isUsed, false),
-          gt(otps.expiresAt, new Date())
-        )
+          gt(otps.expiresAt, new Date()),
+        ),
       )
       .orderBy(desc(otps.createdAt))
       .limit(1);
@@ -154,7 +154,7 @@ export const verifyUser = async (
     if (updateUserWithVerification) {
       const tokens = generateTokens(
         updateUserWithVerification?.id,
-        updateUserWithVerification?.email
+        updateUserWithVerification?.email,
       );
 
       res.cookie("refreshToken", tokens.refreshToken, {
@@ -173,7 +173,7 @@ export const verifyUser = async (
 
 export const resendVerificationEmail = async (
   req: Request<{}, {}, ResendInput>,
-  res: Response
+  res: Response,
 ) => {
   const { email } = req.body;
   try {
@@ -190,7 +190,7 @@ export const resendVerificationEmail = async (
 
     function generateEightDigitNumber(): string {
       return String(
-        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000)
+        Math.floor(Math.random() * (99999999 - 10000000 + 1) + 10000000),
       );
     }
 

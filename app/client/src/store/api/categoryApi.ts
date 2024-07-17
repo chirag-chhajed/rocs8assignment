@@ -48,7 +48,7 @@ export const categoryApi = api.injectEndpoints({
       }),
       async onQueryStarted(
         { categoryId, isInterested },
-        { dispatch, queryFulfilled, getState }
+        { dispatch, queryFulfilled, getState },
       ) {
         // Optimistic update
         const state = getState() as RootState;
@@ -60,13 +60,13 @@ export const categoryApi = api.injectEndpoints({
             { page: currentPage },
             (draft) => {
               const category = draft.categories.find(
-                (c) => c.id === categoryId
+                (c) => c.id === categoryId,
               );
               if (category) {
                 category.isInterested = isInterested;
               }
-            }
-          )
+            },
+          ),
         );
         try {
           // console.log("Waiting for query to fulfill");

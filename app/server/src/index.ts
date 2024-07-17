@@ -1,10 +1,10 @@
 import { pool } from "@/db/client.js";
+import { env } from "@/env.js";
 import { authRouter } from "@/routes/auth.routes.js";
 import { categoriesRouter } from "@/routes/categories.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import { env } from "@/env.js";
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: env.CLIENT_URL,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(cookieParser());

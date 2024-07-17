@@ -1,7 +1,7 @@
 function generatePageNumbers(
   currentPage: number,
   totalPages: number,
-  displayCount = 8
+  displayCount = 8,
 ): (number | "...")[] {
   const pages: (number | "...")[] = [];
 
