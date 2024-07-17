@@ -8,6 +8,7 @@ export const pool = new pg.Pool({
   user: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   database: env.POSTGRES_DATABASE,
+  ssl: true,
 });
 
 const db = drizzle(pool);
