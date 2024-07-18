@@ -5,6 +5,7 @@ import { categoriesRouter } from "@/routes/categories.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import pino from "pino-http";
 
 const app = express();
 
@@ -12,11 +13,33 @@ app.use(
   cors({
     origin: env.CLIENT_URL,
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  pino({
+    serializers: {
+      req: (req) => ({
+        id: req.id,
+        method: req.method,
+        url: req.url,
+        query: req.query,
+        params: req.params,
+        headers: {
+          host: req.headers.host,
+        },
+      }),
+      res: (res) => ({
+        headers: {
+          "content-type": res.headers["content-type"],
+        },
+        code: res.statusCode,
+      }),
+    },
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
