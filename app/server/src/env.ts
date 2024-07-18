@@ -29,7 +29,7 @@ const envVariables = z.object({
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
   POSTGRES_DATABASE: z.string().min(1),
-  POSTGRES_SSL: z.boolean().default(false),
+  POSTGRES_SSL: z.coerce.boolean().default(false),
   JWT_ACCESS_SECRET_KEY: z.string().min(1),
   JWT_REFRESH_SECRET_KEY: z.string().min(1),
   SMTP_HOST: z.string().min(1),
