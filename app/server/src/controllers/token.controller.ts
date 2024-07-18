@@ -9,7 +9,12 @@ const isProd = env.NODE_ENV_APP === "production";
 export const refreshingToken = (req: Request, res: Response) => {
   try {
     const token = req.cookies.refreshToken;
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+    });
 
     if (!token) {
       return res.status(204).json({ error: "No refresh token found" });

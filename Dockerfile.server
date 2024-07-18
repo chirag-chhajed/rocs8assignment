@@ -1,24 +1,40 @@
 FROM node:20-alpine AS base
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+# Set the working directory
 WORKDIR /app
 
+# Copy package manager configuration files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN corepack enable
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-FROM base AS server
+# Enable corepack and install dependencies
+RUN corepack enable && \
+    pnpm install --frozen-lockfile
 
+# Builder stage
+FROM base AS builder
+
+# Copy the application files
 COPY . .
+
+# Copy installed dependencies from base stage
 COPY --from=base /app/node_modules /app/
 
-RUN pnpm deploy --filter=server /prod
+RUN pnpm deploy --filter=server /prod 
 
 WORKDIR /prod
 
-RUN pnpm run build:ci
+RUN pnpm build:ci
+
+# Final stage
+FROM node:20-alpine AS final
+
+WORKDIR /prod
+
+COPY --from=builder /prod /prod
 
 EXPOSE 3434
 
-CMD ["pnpm", "start"]
+CMD ["node", "dist/src/index.js"]

@@ -1,5 +1,6 @@
 import {
   loginUser,
+  logoutUser,
   registerUser,
   resendVerificationEmail,
   verifyUser,
@@ -26,6 +27,4 @@ authRouter.post("/resend", validateData(resendSchema), resendVerificationEmail);
 
 authRouter.get("/refresh", refreshingToken);
 
-authRouter.post("/logout", async (req, res) => {
-  res.clearCookie("refreshToken").json("Logged out");
-});
+authRouter.post("/logout", logoutUser);
