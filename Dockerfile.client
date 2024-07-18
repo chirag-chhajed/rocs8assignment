@@ -1,0 +1,44 @@
+# Install dependencies
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable
+RUN pnpm install --frozen-lockfile
+
+
+FROM deps AS next-app-build
+
+# Add you API URL while building the docker image
+# docker build --build-arg NEXT_PUBLIC_API_URL="http://localhost:3434/api" -t rocsassignmetClient:latest .
+# env variables prefixed with NEXT_PUBLIC_ are available in the client side and are required to be passed during build time
+# while for other env variables, you can use --env during docker run
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+COPY . .
+COPY --from=deps /app/node_modules /app/
+RUN pnpm deploy --filter=client /prod/app
+WORKDIR /prod/app
+RUN pnpm build
+
+FROM deps AS runner
+WORKDIR /prod/app
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=next-app-build /prod/app/public ./public
+
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+COPY --from=next-app-build --chown=nextjs:nodejs /prod/app/.next/standalone ./
+COPY --from=next-app-build --chown=nextjs:nodejs /prod/app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+
+CMD HOSTNAME="0.0.0.0" node server.js

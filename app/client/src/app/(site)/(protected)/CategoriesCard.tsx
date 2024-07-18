@@ -22,7 +22,8 @@ const CategoriesCard = ({ page }: { page: number }) => {
   const { categories, currentPage, hasNext, hasPrevious, totalPages } =
     data ?? {};
 
-  const paginationNumbers = generatePageNumbers(currentPage, totalPages);
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  const paginationNumbers = generatePageNumbers(currentPage!, totalPages!);
   return (
     <main className="flex justify-center px-10">
       <div className="my-10 rounded-[20px] border border-neutral-300 bg-white px-16 py-10 space-y-6 lg:max-w-[576px] h-full">
@@ -51,13 +52,16 @@ const CategoriesCard = ({ page }: { page: number }) => {
             <PaginationItem>
               <PaginationLink
                 aria-disabled={!hasPrevious}
-                href={hasPrevious ? `/?page=${currentPage - 1}` : ""}
+                href={
+                  hasPrevious ? `/?page=${(currentPage as number) - 1}` : ""
+                }
                 aria-label="Go to previous page"
               >
                 &lt;
               </PaginationLink>
             </PaginationItem>
             {paginationNumbers.map((pageNumber, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <doesn't update, it's static>
               <PaginationItem key={`pagination_${index}_c`}>
                 {pageNumber === "..." ? (
                   <PaginationEllipsis />
@@ -74,7 +78,7 @@ const CategoriesCard = ({ page }: { page: number }) => {
             ))}
             <PaginationItem>
               <PaginationLink
-                href={hasNext ? `/?page=${currentPage + 1}` : ""}
+                href={hasNext ? `/?page=${(currentPage as number) + 1}` : ""}
                 aria-label="Go to next page"
               >
                 &gt;

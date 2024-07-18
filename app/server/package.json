@@ -12,7 +12,8 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "studio": "drizzle-kit studio",
-    "dk": "drizzle-kit"
+    "dk": "drizzle-kit",
+    "seed": "node seed_categories.js"
   },
   "keywords": [],
   "author": "",

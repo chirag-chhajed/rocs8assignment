@@ -1,0 +1,24 @@
+FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+FROM base AS server
+
+COPY . .
+COPY --from=base /app/node_modules /app/
+
+RUN pnpm deploy --filter=server /prod
+
+WORKDIR /prod
+
+RUN pnpm run build:ci
+
+EXPOSE 3434
+
+CMD ["pnpm", "start"]

@@ -1,12 +1,8 @@
 import { env } from "@/env.js";
+import type { UserPayload } from "@/types/index.js";
 import { generateTokens } from "@/utils/token.js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-
-export interface UserPayload extends jwt.JwtPayload {
-  id: string;
-  email: string;
-}
 
 const isProd = env.NODE_ENV_APP === "production";
 

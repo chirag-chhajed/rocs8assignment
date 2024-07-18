@@ -29,6 +29,7 @@ app.listen(env.PORT, async () => {
     await pool.connect();
   } catch (error) {
     console.error("Failed to connect to the database", error);
+    process.exit(1);
   }
   console.log(`Server started on http://localhost:${env.PORT}`);
 });

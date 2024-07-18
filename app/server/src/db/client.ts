@@ -4,11 +4,11 @@ import pg from "pg";
 
 export const pool = new pg.Pool({
   host: env.POSTGRES_HOST,
-  port: Number(env.POSTGRES_PORT),
+  port: env.POSTGRES_PORT,
   user: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   database: env.POSTGRES_DATABASE,
-  ssl: true,
+  ssl: env.POSTGRES_SSL,
 });
 
 const db = drizzle(pool);

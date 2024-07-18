@@ -1,15 +1,7 @@
-import type { UserPayload } from "@/controllers/token.controller.js";
 import { env } from "@/env.js";
+import type { UserPayload } from "@/types/index.js";
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: UserPayload;
-    }
-  }
-}
 
 export const authenticate = async (
   req: Request,

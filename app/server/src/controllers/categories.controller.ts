@@ -3,10 +3,6 @@ import { categories, userCategories } from "@/db/schema.js";
 import { and, count, eq, sql } from "drizzle-orm";
 import type { Request, Response } from "express";
 
-type UserCategory = {
-  categoryId: string;
-};
-
 export const getCategories = async (req: Request, res: Response) => {
   const userId = req.user?.id;
   if (!userId) {
@@ -64,6 +60,10 @@ export const getCategories = async (req: Request, res: Response) => {
   }
 };
 
+type UserCategory = {
+  categoryId: string;
+};
+
 export const addUserCategory = async (
   req: Request<UserCategory, {}, { isInterested: boolean }>,
   res: Response,
@@ -76,7 +76,7 @@ export const addUserCategory = async (
     return;
   }
   try {
-    const [updatedCategories] = await db
+    await db
       .insert(userCategories)
       .values({
         userId: Number(userId),
@@ -89,8 +89,7 @@ export const addUserCategory = async (
           isInterested: req.body.isInterested,
           updatedAt: new Date(),
         },
-      })
-      .returning();
+      });
 
     return res.json({ message: "Category added successfully" });
   } catch (error) {
