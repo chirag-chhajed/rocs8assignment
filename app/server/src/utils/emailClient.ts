@@ -6,6 +6,6 @@ export const emailClient = nodemailer.createTransport({
     pass: env.SMTP_PASSWORD,
     user: env.SMTP_USER,
   },
-  port: Number(env.SMTP_PORT),
+  port: env.SMTP_PORT,
   host: env.SMTP_HOST,
 });
