@@ -3,6 +3,7 @@ import { otps, users } from "@/db/schema.js";
 import { env } from "@/env.js";
 import { loadEmailBlockList } from "@/utils/emailBlockList.js";
 import { emailClient } from "@/utils/emailClient.js";
+import { sendHTMLMail, sendPlainText } from "@/utils/mail.js";
 import { generateTokens } from "@/utils/token.js";
 import type {
   LoginInput,
@@ -62,11 +63,11 @@ export const registerUser = async (
         userId: insertedUserInfo?.id,
       });
       await emailClient.sendMail({
-        from: "postmaster@2af42976af8252bc9911d16d.work.gd",
+        from: env.SMTP_USER,
         to: email,
         subject: "Verify your email",
-        text: `Your OTP is ${otp}`,
-        html: `Your OTP is <b>${otp}</b>`,
+        text: sendPlainText(otp),
+        html: sendHTMLMail(otp),
       });
       return insertedUserInfo;
     });
@@ -204,7 +205,7 @@ export const resendVerificationEmail = async (
       });
     });
     await emailClient.sendMail({
-      from: "postmaster@2af42976af8252bc9911d16d.work.gd",
+      from: env.SMTP_USER,
       to: email,
       subject: "Verify your email",
       text: `Your OTP is ${newOtp}`,

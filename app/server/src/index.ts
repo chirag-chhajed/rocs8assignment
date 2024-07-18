@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: env.CLIENT_URL,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(cookieParser());
@@ -34,19 +34,3 @@ app.listen(env.PORT, async () => {
   }
   console.log(`Server started on http://localhost:${env.PORT}`);
 });
-
-// Handle application termination
-process.on("SIGINT", async () => {
-  console.log("Received SIGINT. Closing database connection and exiting...");
-  await closeDbConnection();
-  process.exit(0);
-});
-
-async function closeDbConnection() {
-  try {
-    await pool.end();
-    console.log("Database connection closed");
-  } catch (error) {
-    console.error("Error closing database connection:", error);
-  }
-}
