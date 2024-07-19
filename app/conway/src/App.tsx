@@ -9,6 +9,7 @@ import {
 } from "react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "./lib/utils";
+import { Button } from "./components/ui/button";
 
 const MAX_GRID_WIDTH = 1500;
 const MAX_GRID_HEIGHT = 1500;
@@ -106,7 +107,7 @@ export default function App() {
   };
   const toggleCell = useCallback(
     (i: number, j: number) => {
-      if (isRunning) return; // Optionally prevent toggling while the simulation is running
+      if (isRunning) return;
 
       setGrid((g) => {
         const newGrid = [...g];
@@ -120,33 +121,33 @@ export default function App() {
   return (
     <div className="px-5 py-3 h-screen flex flex-col">
       <header>
-        <h1 className="text-2xl">Conway's Game of Life</h1>
+        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+          Conway's Game of Life
+        </h1>
       </header>
-      <div className="my-4">
+      <div className="my-4 space-x-2">
         {!isRunning ? (
-          <button
+          <Button
             onClick={startSimulation}
-            className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+            variant={"default"}
+            // className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
             type="button"
           >
             Start
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             onClick={stopSimulation}
-            className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+            // className="bg-red-500 text-white px-4 py-2 rounded mr-2"
             type="button"
+            variant={"destructive"}
           >
             Stop
-          </button>
+          </Button>
         )}
-        <button
-          onClick={resetGrid}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-          type="button"
-        >
+        <Button onClick={resetGrid} type="button">
           Reset
-        </button>
+        </Button>
         <Slider
           onValueChange={(e) => {
             setSize(e[0]);
@@ -158,18 +159,17 @@ export default function App() {
           min={15}
           max={60}
           step={5}
-          className="my-4"
+          className="my-4 md:w-1/2 lg:w-1/3"
         />
         <div className="my-2">Iterations: {iterations}</div>
       </div>
       <main
-        className="flex-grow flex justify-center"
+        className="flex-grow flex justify-center mx-auto"
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${columns}, ${deferredSize}px)`,
           width: `${columns * deferredSize}px`,
           height: `${rows * deferredSize}px`,
-          margin: "0 auto",
         }}
       >
         <MemoizedGrid
@@ -205,7 +205,6 @@ const MemoizedGrid = memo(
             style={{
               width: deferredSize,
               height: deferredSize,
-
               borderRadius: `${Math.max(2, deferredSize / 10)}px`,
               boxShadow: grid[i][k]
                 ? `0 0 ${deferredSize / 5}px rgba(0, 0, 0, 0.5)`
