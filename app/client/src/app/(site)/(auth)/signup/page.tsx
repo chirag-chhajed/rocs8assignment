@@ -23,7 +23,7 @@ const formSchema = z.object({
     .string()
     .trim()
     .min(2, "Name must be minimum of 2 characters")
-    .max(255),
+    .max(100, "Name must be maximum of 100 characters"),
   email: z.string().trim().email("Invalid email address"),
   password: z
     .string()
@@ -31,11 +31,11 @@ const formSchema = z.object({
     .min(8, "Password must be minimum of 8 characters")
     .regex(
       /(?=.*[A-Z])(?=.*[a-z])/,
-      "Password must contain upper and lower case letters",
+      "Password must contain upper and lower case letters"
     )
     .regex(
       /(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?])/,
-      "Password must contain special characters",
+      "Password must contain special characters"
     ),
 });
 

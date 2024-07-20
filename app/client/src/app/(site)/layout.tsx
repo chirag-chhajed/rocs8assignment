@@ -46,7 +46,7 @@ const SiteLayout = ({ children }: { children: React.ReactNode }) => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Hi, John</NavigationMenuTrigger>
-                <NavigationMenuContent className="py-4 px-3 bg-white right-0 w-36 rounded-md space-y-4">
+                <NavigationMenuContent className="py-4 px-3 bg-white right-0 w-36 rounded-md space-y-4 z-50">
                   <p className="text-neutral-800 font-medium text-sm">
                     Account
                   </p>
@@ -134,10 +134,20 @@ const SiteLayout = ({ children }: { children: React.ReactNode }) => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex justify-center items-center gap-8">
-            <button className="hover:bg-neutral-100 rounded p-2 " type="button">
+            <button
+              className="hover:bg-neutral-100 rounded p-2"
+              type="button"
+              title="Search"
+              aria-label="Search"
+            >
               <Search />
             </button>
-            <button className="hover:bg-neutral-100 rounded p-2 " type="button">
+            <button
+              className="hover:bg-neutral-100 rounded p-2"
+              type="button"
+              title="Shopping Cart"
+              aria-label="Shopping Cart"
+            >
               <ShoppingCart />
             </button>
           </div>

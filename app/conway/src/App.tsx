@@ -8,8 +8,15 @@ import {
   memo,
 } from "react";
 import { Slider } from "@/components/ui/slider";
-import { cn } from "./lib/utils";
-import { Button } from "./components/ui/button";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 const MAX_GRID_WIDTH = 1500;
 const MAX_GRID_HEIGHT = 1500;
@@ -104,6 +111,7 @@ export default function App() {
   const resetGrid = () => {
     setGrid(initializeGrid());
     setIsRunning(false);
+    setIterations(0);
   };
   const toggleCell = useCallback(
     (i: number, j: number) => {
@@ -119,33 +127,78 @@ export default function App() {
     [isRunning]
   );
   return (
-    <div className="px-5 py-3 h-screen flex flex-col">
-      <header>
+    <div className="px-5 py-3 h-screen flex flex-col bg-accent">
+      <header className="flex justify-between items-center">
         <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
           Conway's Game of Life
         </h1>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size={"icon"}
+                variant="ghost"
+                title="info of the game"
+                aria-label="info of the game"
+              >
+                <Info size={24} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent asChild>
+              <div className="space-y-3 text-accent-foreground w-80 md:w-fit mr-4">
+                <p className="text-lg font-bold">For a live cell:</p>
+                <ol className="list-decimal list-inside font-medium text-base">
+                  <li>Survives if it has 2 or 3 live neighbors</li>
+                  <li>
+                    Dies if it has fewer than 2 live neighbors (underpopulation)
+                  </li>
+                  <li>
+                    Dies if it has more than 3 live neighbors (overpopulation)
+                  </li>
+                </ol>
+                <p className="text-lg font-bold">For a dead cell:</p>
+                <ol className="list-decimal list-inside font-medium text-base">
+                  <li>
+                    Becomes alive if it has exactly 3 live neighbors
+                    (reproduction)
+                  </li>
+                  <li>Stays dead in all other cases</li>
+                </ol>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </header>
       <div className="my-4 space-x-2">
         {!isRunning ? (
           <Button
             onClick={startSimulation}
             variant={"default"}
-            // className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
             type="button"
+            title="Start the Game"
+            aria-label="Start the Game"
           >
             Start
           </Button>
         ) : (
           <Button
             onClick={stopSimulation}
-            // className="bg-red-500 text-white px-4 py-2 rounded mr-2"
             type="button"
             variant={"destructive"}
+            title="Pause the Game"
+            aria-label="Pause the Game"
           >
             Stop
           </Button>
         )}
-        <Button onClick={resetGrid} type="button">
+        <Button
+          onClick={resetGrid}
+          type="button"
+          variant={"outline"}
+          title="Reset the Grid"
+          aria-label="Reset the Grid"
+        >
           Reset
         </Button>
         <Slider

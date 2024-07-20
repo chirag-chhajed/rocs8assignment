@@ -16,7 +16,7 @@ import {
 } from "@/store/api/categoryApi";
 
 const CategoriesCard = ({ page }: { page: number }) => {
-  const { data, isLoading, isFetching } = useGetCategoriesQuery({
+  const { data, isLoading } = useGetCategoriesQuery({
     page: page || 1,
   });
   const { categories, currentPage, hasNext, hasPrevious, totalPages } =

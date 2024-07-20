@@ -5,14 +5,14 @@ import { updateAccessToken } from "@/store/authSlice";
 import { useAppDispatch } from "@/store/hooks";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data, isLoading } = useRefreshTokenQuery();
+  const { data, isLoading, isFetching } = useRefreshTokenQuery();
   const dispatch = useAppDispatch();
 
   if (data?.accessToken) {
     dispatch(updateAccessToken({ accessToken: data.accessToken }));
   }
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return null;
   }
 
