@@ -31,10 +31,14 @@ export default function App() {
   const width = Math.min(windowWidth! - 40, MAX_GRID_WIDTH);
   // biome-ignore lint/style/noNonNullAssertion: <explanation>
   const height = Math.min(windowHeight! - 150, MAX_GRID_HEIGHT);
+
+  // subtracting 40 to account for padding
   const columns = Math.floor((width - 40) / deferredSize);
+  // subtracting 150 to account for header
   const rows = Math.floor((height - 150) / deferredSize);
   const [isRunning, setIsRunning] = useState(false);
-  const runningRef = useRef(isRunning);
+
+  const runningRef = useRef<boolean>(isRunning);
   runningRef.current = isRunning;
 
   const initializeGrid = useCallback(() => {

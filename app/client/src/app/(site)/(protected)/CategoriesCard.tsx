@@ -108,7 +108,7 @@ const Category = ({
 }: {
   category: { id: string; name: string; isInterested: boolean };
 }) => {
-  const [updateCategory, { isLoading }] = useUpdateCategoryMutation();
+  const [updateCategory] = useUpdateCategoryMutation();
   const handleCheckedChange = async (checked: boolean) => {
     try {
       await updateCategory({

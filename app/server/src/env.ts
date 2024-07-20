@@ -2,6 +2,12 @@ import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 import "dotenv/config";
 
+/**
+ * Environment variables
+ * Benefit of using zod is that it provides type safety and if anything is missing
+ * it will throw an error
+ * Also environment variables are string by default, zod handles the coercion of the values
+ */
 export const env = createEnv({
   server: {
     POSTGRES_HOST: z.string().min(1),
@@ -45,7 +51,6 @@ envVariables.parse(process.env);
 
 declare global {
   namespace NodeJS {
-    // @ts-ignore
     interface ProcessEnv extends z.infer<typeof envVariables> {}
   }
 }

@@ -1,5 +1,6 @@
 import { db } from "@/db/client.js";
 import { categories, userCategories } from "@/db/schema.js";
+import { logger } from "@/utils/logger.js";
 import { and, count, eq, sql } from "drizzle-orm";
 import type { Request, Response } from "express";
 
@@ -30,7 +31,7 @@ export const getCategories = async (req: Request, res: Response) => {
         name: categories.name,
         isInterested:
           sql<boolean>`COALESCE(${userCategories.isInterested}, false)`.as(
-            "is_interested",
+            "is_interested"
           ),
       })
       .from(categories)
@@ -38,8 +39,8 @@ export const getCategories = async (req: Request, res: Response) => {
         userCategories,
         and(
           eq(userCategories.categoryId, categories.id),
-          eq(userCategories.userId, Number.parseInt(userId)),
-        ),
+          eq(userCategories.userId, Number.parseInt(userId))
+        )
       )
       .limit(pageSize)
       .offset((page - 1) * pageSize)
@@ -55,7 +56,7 @@ export const getCategories = async (req: Request, res: Response) => {
       hasNext: hasNextPage,
     });
   } catch (error) {
-    console.error("Failed to fetch categories", error);
+    logger.error(`Failed to fetch categories, ${error}`);
     res.status(500).json({ message: "Failed to fetch categories" });
   }
 };
@@ -66,7 +67,7 @@ type UserCategory = {
 
 export const addUserCategory = async (
   req: Request<UserCategory, {}, { isInterested: boolean }>,
-  res: Response,
+  res: Response
 ) => {
   const userId = req.user?.id;
   const { categoryId } = req.params;
@@ -93,7 +94,7 @@ export const addUserCategory = async (
 
     return res.json({ message: "Category added successfully" });
   } catch (error) {
-    console.error("Failed to add category", error);
+    logger.error(`Failed to add category ${error}`);
     return res.status(500).json({ message: "Failed to add category" });
   }
 };

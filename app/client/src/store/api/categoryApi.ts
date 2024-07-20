@@ -27,6 +27,7 @@ export const categoryApi = api.injectEndpoints({
         method: "GET",
         params: { page },
       }),
+      // update the currentPage state when the query is fulfilled
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -48,7 +49,7 @@ export const categoryApi = api.injectEndpoints({
       }),
       async onQueryStarted(
         { categoryId, isInterested },
-        { dispatch, queryFulfilled, getState },
+        { dispatch, queryFulfilled, getState }
       ) {
         // Optimistic update
         const state = getState() as RootState;
@@ -60,20 +61,19 @@ export const categoryApi = api.injectEndpoints({
             { page: currentPage },
             (draft) => {
               const category = draft.categories.find(
-                (c) => c.id === categoryId,
+                (c) => c.id === categoryId
               );
               if (category) {
                 category.isInterested = isInterested;
               }
-            },
-          ),
+            }
+          )
         );
         try {
           // console.log("Waiting for query to fulfill");
           await queryFulfilled;
           // console.log("Query fulfilled successfully");
         } catch {
-          // If the mutation fails, revert the optimistic update
           // console.error("Mutation failed, reverting optimistic update");
           patchResult.undo();
         }

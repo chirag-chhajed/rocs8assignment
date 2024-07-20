@@ -27,11 +27,15 @@ const baseQueryWithReauth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
+
+  // If the request failed due to an expired token,
+  // refresh the token and retry the request.
+
   if (result.error?.status === 403) {
     const refreshResult = (await baseQuery(
       "/auth/refresh",
       api,
-      extraOptions,
+      extraOptions
     )) as {
       data: { accessToken: string } | undefined;
       error?: FetchBaseQueryError;
@@ -39,7 +43,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
     if (refreshResult.data) {
       api.dispatch(
-        updateAccessToken({ accessToken: refreshResult.data.accessToken }),
+        updateAccessToken({ accessToken: refreshResult.data.accessToken })
       );
       result = await baseQuery(args, api, extraOptions);
     } else {

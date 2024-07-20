@@ -2,11 +2,11 @@
 
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-type AuthState = {
+type currentPageState = {
   currentPage: number;
 };
 
-const initialState: AuthState = {
+const initialState: currentPageState = {
   currentPage: 1,
 };
 
@@ -16,7 +16,7 @@ export const currentPageSlice = createSlice({
   reducers: {
     updateCurrentPage: (
       state,
-      action: PayloadAction<{ currentPage: number }>,
+      action: PayloadAction<{ currentPage: number }>
     ) => {
       state.currentPage = action.payload.currentPage;
     },

@@ -7,12 +7,12 @@ import pg from "pg";
 
 console.log(process.env.POSTGRES_DATABASE);
 const client = new pg.Client({
-  host: String(process.env.POSTGRES_HOST),
+  host: process.env.POSTGRES_HOST,
   port: Number(process.env.POSTGRES_PORT),
   user: process.env.POSTGRES_USER,
-  password: String(process.env.POSTGRES_PASSWORD),
+  password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DATABASE,
-  ssl: Boolean(process.env.POSTGRES_SSL === "true"),
+  ssl: process.env.POSTGRES_SSL === true,
 });
 
 async function seedCategories() {

@@ -23,6 +23,7 @@ authRouter.post("/login", validateData(loginSchema), loginUser);
 
 authRouter.post("/verify", validateData(verifySchema), verifyUser);
 
+// Note: Not implemented on the client yet but can be used to resend the verification email
 authRouter.post("/resend", validateData(resendSchema), resendVerificationEmail);
 
 authRouter.get("/refresh", refreshingToken);

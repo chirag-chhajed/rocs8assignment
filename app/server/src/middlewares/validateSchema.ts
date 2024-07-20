@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError, type z } from "zod";
 
+/**
+ * Middleware to validate the request body against a schema
+ */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function validateData(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -21,6 +24,9 @@ export function validateData(schema: z.ZodObject<any, any>) {
   };
 }
 
+/**
+ * Middleware to validate the request query params against a schema
+ */
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export function validateQueryParams(schema: z.ZodObject<any, any>) {
   return (req: Request, res: Response, next: NextFunction) => {

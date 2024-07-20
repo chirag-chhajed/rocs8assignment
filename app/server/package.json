@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "swc src --out-dir=dist",
-    "start": "node dist/src/index.js | pnpm pino-pretty",
+    "start": "node dist/src/index.js",
     "dev": "nodemon src/index.ts",
     "build:ci": "tsc && swc src --out-dir=dist",
     "db:generate": "drizzle-kit generate",

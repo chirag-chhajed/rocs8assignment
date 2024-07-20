@@ -3,6 +3,7 @@ import { otps, users } from "@/db/schema.js";
 import { env } from "@/env.js";
 import { loadEmailBlockList } from "@/utils/emailBlockList.js";
 import { emailClient } from "@/utils/emailClient.js";
+import { logger } from "@/utils/logger.js";
 import { sendHTMLMail, sendPlainText } from "@/utils/mail.js";
 import { generateTokens } from "@/utils/token.js";
 import type {
@@ -29,6 +30,11 @@ export const registerUser = async (
       return;
     }
 
+    /**
+     * Check if the email domain is blocked
+     * If the email domain is blocked, return an error
+     * Otherwise, continue with the registration process
+     */
     const emailBlockList = await loadEmailBlockList();
     const isEmailBlocked = emailBlockList.includes(
       email.split("@")[1] as string
@@ -48,6 +54,11 @@ export const registerUser = async (
     }
     const otp = generateEightDigitNumber();
 
+    /**
+     * Using a transaction to ensure that the user and OTP are inserted
+     * into the database together
+     * If the OTP insertion fails, the user insertion will also be rolled back
+     */
     const newlyRegisteredUser = await db.transaction(async (trx) => {
       const [insertedUserInfo] = await trx
         .insert(users)
@@ -75,7 +86,7 @@ export const registerUser = async (
 
     return res.status(201).json({ id: newlyRegisteredUser?.id });
   } catch (error) {
-    console.error("error in registerUser", error);
+    logger.error(`err: "error in registerUser", ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -86,23 +97,19 @@ export const loginUser = async (
 ) => {
   const { email, password } = req.body;
   try {
-    const user = await db.select().from(users).where(eq(users.email, email));
-    if (user.length === 0) {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+
+    if (!user) {
       res.status(401).json({ error: "User doesn not exists from this email" });
       return;
     }
-    if (!user[0]?.isVerified) {
-      res.status(401).json({ error: "User is not verified" });
-    }
-    if (user[0]?.password) {
-      const hashedPassword = await bcrypt.compare(password, user[0].password);
+    if (user.password) {
+      const hashedPassword = await bcrypt.compare(password, user.password);
       if (!hashedPassword) {
         res.status(401).json({ error: "Password is incorrect" });
         return;
       }
-
-      const tokens = generateTokens(user[0]?.id, user[0]?.email);
-
+      const tokens = generateTokens(user.id, user.email);
       res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -112,7 +119,7 @@ export const loginUser = async (
       return res.status(200).json({ accessToken: tokens.accessToken });
     }
   } catch (error) {
-    console.error("Error in loginUser:", error);
+    logger.error(`"Error in loginUser:" ${error}`);
     return res.status(500).json({ error: "Internal server" });
   }
 };
@@ -140,6 +147,8 @@ export const verifyUser = async (
     if (!userOtps) {
       return res.status(400).json({ error: "Invalid or expired OTP" });
     }
+
+    // Using a transaction to ensure that the user and OTP are updated together
     const updateUserWithVerification = await db.transaction(async (trx) => {
       const [updatedUser] = await trx
         .update(users)
@@ -168,7 +177,7 @@ export const verifyUser = async (
       return res.status(200).json({ accessToken: tokens.accessToken });
     }
   } catch (error) {
-    console.error("Error in verifyUser:", error);
+    logger.error(` Error in verifyUser: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -214,16 +223,23 @@ export const resendVerificationEmail = async (
     });
     return res.status(200).json({ id: userInfo.id });
   } catch (error) {
-    console.error("Error in resendVerificationEmail:", error);
+    logger.error(`Error in resendVerificationEmail:" ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
-export const logoutUser = async (req: Request, res: Response) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: isProd ? "none" : "lax",
-    secure: isProd,
-  });
+export const logoutUser = (req: Request, res: Response) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
+    });
+    logger.info("User logged out successfully");
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    logger.error(`Error during logout: ${error}`);
+    res.status(500).json({ message: "An error occurred during logout" });
+  }
 };

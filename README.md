@@ -31,6 +31,13 @@ The client is deployed on [https://rocs8assignment.vercel.app/](https://rocs8ass
 
 ### Approach
 
+#### Client api calls
+
+1. The client uses RTK Query for fetching the data from the server,all the api calls happens on the client side because it's robust, explicit
+2. In the [app/client/src/store/index.ts](./app/client/src/store/index.ts#L34), intercepting the requests and if a 403 status code is received, it sends an refresh token request and then retries the original request
+3. In the [app/client/src/store/api/categoryApi.ts](./app/client/src/store/api/categoryApi.ts#L50-L81), using optimistic updates for updateCategory for better user experience
+4. Using cache invalidation for the updateCategory
+
 #### Database Schema
 
 ![Database Schema](image.png)

@@ -1,5 +1,6 @@
 import { env } from "@/env.js";
 import type { UserPayload } from "@/types/index.js";
+import { logger } from "@/utils/logger.js";
 import { generateTokens } from "@/utils/token.js";
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
@@ -44,7 +45,7 @@ export const refreshingToken = (req: Request, res: Response) => {
 
     return res.status(200).json({ accessToken });
   } catch (error) {
-    console.error("Error in refreshing token:", error);
+    logger.error(`Error in refreshing token:, ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
