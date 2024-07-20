@@ -28,7 +28,7 @@ const SiteLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <header className="px-10 pb-4">
         <div className="justify-end flex">
-          <NavigationMenu>
+          <NavigationMenu className="z-10">
             <NavigationMenuList>
               <NavigationMenuItem>
                 <Link href="#" legacyBehavior passHref>
